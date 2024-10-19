@@ -43,24 +43,6 @@ max_new_tokens = args.max_new_tokens # how many new tokens to generate
 epochs = args.epochs
 # ------------
 
-# Initialize wandb
-wandb.init(project="movie-gpt", config={
-    "batch_size": batch_size,
-    "context_length": block_size,
-    "learning_rate": learning_rate,
-    "n_embd": n_embd,
-    "n_head": n_head,
-    "n_layer": n_layer,
-    "dropout": dropout,
-    "device": device,
-    "max_new_tokens": max_new_tokens,
-    "seed": args.seed,
-    "temperature": args.temperature,
-    "top_k": args.top_k,
-    "logging_steps": args.logging_steps,
-    "epochs": epochs
-})
-
 # seed for reproducibility
 torch.manual_seed(args.seed)
 
@@ -315,6 +297,23 @@ else:
     print("No checkpoints found. Training from scratch")
     print(args.training_data + " will be used for training")
     print(f"Training will be done for {epochs} epochs")
+    # Initialize wandb
+    wandb.init(project="movie-gpt", config={
+        "batch_size": batch_size,
+        "context_length": block_size,
+        "learning_rate": learning_rate,
+        "n_embd": n_embd,
+        "n_head": n_head,
+        "n_layer": n_layer,
+        "dropout": dropout,
+        "device": device,
+        "max_new_tokens": max_new_tokens,
+        "seed": args.seed,
+        "temperature": args.temperature,
+        "top_k": args.top_k,
+        "logging_steps": args.logging_steps,
+        "epochs": epochs
+    })
     # training loop with epochs
     steps_per_epoch = len(train_data) // (block_size * batch_size)
     eval_interval = steps_per_epoch // 5  # Evaluate approximately 5 times per epoch
@@ -351,7 +350,7 @@ else:
 
     print("Training finished")
 
-    start_str = encode(input("Enter the starting string: ") + ' ')
+    start_str = encode(input("Enter the starting string:"))
     start_idx = torch.tensor(start_str, dtype=torch.long).unsqueeze(0).to(device)
     output = decode(model.generate(start_idx, max_new_tokens=max_new_tokens, temperature=args.temperature, top_k=args.top_k)[0].tolist())
     print(output)
