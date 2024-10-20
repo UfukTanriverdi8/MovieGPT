@@ -58,7 +58,7 @@ In a far-right remote town the hood on stage and the organizers, Mano, a huge ne
 The overview of the movie named 'Year Of Three' is:
 A crippled, eccentric, prudish joke movie, which Persia and Ernestria call families certain stays with the daughter on a trip with his friends, and Dimitri, Stefan, is assigned to a gardener shop in the law. Sweaty man's life is shattle, surrounded by the laws of his agreement with a climactic eye. And with everyone, gladiator rules?
 
-These are the some of the interesting ones. There's a lot of hallucinations too. I added the outputs to the outputs folder.
+These are some of the interesting ones. There's a lot of hallucinations too. I added the outputs to the outputs folder.
 
 
 ## Command Line Arguments
