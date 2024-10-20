@@ -41,10 +41,24 @@ I scaled up the model from the tutorial to get better results. Interestingly onc
 - `n_head`: Number of the heads of each attention layer. Different heads will enable the model to learn different aspects of the same input. I used the value of 8 for this which is less than 12, the value that was used in GPT-1.
 - `n_layer`: Number of the attention layers. It represents how many layers of attention are stacked on top of each other. More of it will lead to deeper general understanding of the given text. Again i used 8 for this which is less than 12 layers of GPT-1.
 
+The only reason i chose these values because i didn't have enough VRAM to increase them. The more you increase these values, the more accurate your model will be.
+
 ## Training
 I trained the model on an RTX A5000 for 5 epochs which was around 5 hours. 
 
 ## Results
+Some really incredible results are:
+
+The overview of the movie named 'Smell' is:
+A psychedelic Hollywood 1968 drama that explores the city of Italy and the death dystopics in France. Following a weekend held hostage in 1978 at BCHD location, a bus trap center severs are on freelance across a business pursuit of the trading agency.
+
+The overview of the movie named 'Ditc Records: Ditc To Highlands' is:
+In a far-right remote town the hood on stage and the organizers, Mano, a huge near-conscious-smart wit, is tested as a single old-timer
+
+The overview of the movie named 'Year Of Three' is:
+A crippled, eccentric, prudish joke movie, which Persia and Ernestria call families certain stays with the daughter on a trip with his friends, and Dimitri, Stefan, is assigned to a gardener shop in the law. Sweaty man's life is shattle, surrounded by the laws of his agreement with a climactic eye. And with everyone, gladiator rules?
+
+These are the some of the interesting ones. There's a lot of hallucinations too. I added the outputs to the outputs folder.
 
 
 ## Command Line Arguments
