@@ -74,8 +74,7 @@ Presents, the nearly annual film festival in nearly 200 countries centres around
 
 These are some of the interesting ones. There's a lot of hallucinations too. I added the sample outputs to the outputs folder.
 
-After playing with the model and checking the results i can say that the generating a movie from a title part is not really working great. I found out that expecting the model to generate a meaningful movie just from the `The description of the movie named '' is:` text is not really realistic. But if we just let the model complete the text that we give for a long time, it generates some interesting results like the ones above.
-
+After playing with the model and checking the results i can say that the generating a movie from a title part is not really working great. I found out that expecting the model to generate a meaningful movie just from the `The description of the movie named '' is:` text is not really realistic. But if we just let the model complete the text that we give for a long time, it generates some interesting results like the ones above. I didn't give the title of each example above, the model just came up with the title and the description while generating new tokens.
 
 ## Command Line Arguments
 The following command line arguments can be used to customize the training and evaluation of the MovieGPT model. Each argument provides flexibility to adjust model hyperparameters, paths, and training configurations.
