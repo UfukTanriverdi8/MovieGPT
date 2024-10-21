@@ -6,6 +6,11 @@ from datetime import datetime
 import argparse
 from tqdm import tqdm
 import wandb
+from torch.amp import GradScaler, autocast
+import os
+
+#os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Movie Plot GPT")
@@ -14,11 +19,11 @@ parser.add_argument('--training_data', type=str, default='dataset/movie_descript
 parser.add_argument('--batch_size', type=int, default=128, help='Batch size for training')
 parser.add_argument('--context_length', type=int, default=256, help='Context length for predictions')
 parser.add_argument('--eval_iters', type=int, default=100, help='Number of iterations to use for evaluation of the loss')
-parser.add_argument('--lr', type=float, default=3e-4, help='Learning rate for the optimizer')
-parser.add_argument('--n_embd', type=int, default=512, help='Number of dimensions for the embeddings')
+parser.add_argument('--lr', type=float, default=2.5e-4, help='Learning rate for the optimizer')
+parser.add_argument('--n_embd', type=int, default=768, help='Number of dimensions for the embeddings')
 parser.add_argument("--n_head", type=int, default=8, help="Number of heads for an attention block")
 parser.add_argument("--n_layer", type=int, default=8, help="Number of attention layers to use in the model")
-parser.add_argument("--dropout", type=float, default=0.2, help="Dropout rate")
+parser.add_argument("--dropout", type=float, default=0.3, help="Dropout rate")
 parser.add_argument('--max_new_tokens', type=int, default=500, help='Maximum number of tokens to generate')
 parser.add_argument('--seed', type=int, default=7331, help='Seed for reproducibility')
 parser.add_argument('--device', type=str, default='cuda', help='Device to use for training')
@@ -26,6 +31,7 @@ parser.add_argument('--temperature', type=float, default=1.0, help='Temperature 
 parser.add_argument('--top_k', type=int, default=None, help='Top-k sampling')
 parser.add_argument('--logging_steps', type=int, default=50, help='Logging steps for wandb')
 parser.add_argument('--epochs', type=int, default=5, help='Number of epochs for training')
+parser.add_argument('--disable-typewriter', action='store_false', help='Disable the typewriter mode for generation')
 args = parser.parse_args()
 
 
@@ -42,6 +48,9 @@ dropout = args.dropout # dropout rate
 max_new_tokens = args.max_new_tokens # how many new tokens to generate
 epochs = args.epochs
 # ------------
+
+# for mixed precision training
+scaler = GradScaler(device)
 
 # seed for reproducibility
 torch.manual_seed(args.seed)
@@ -263,8 +272,8 @@ class GPTLanguageModel(nn.Module):
             idx_next = torch.multinomial(probs, num_samples=1) # (B, 1)
             # append sampled index to the running sequence
             idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
-
-            print(decode([idx_next.item()]), end='', flush=True)
+            if args.disable_typewriter:
+                print(decode([idx_next.item()]), end='', flush=True)
         
         return idx
 
@@ -288,7 +297,8 @@ if args.checkpoint is not None:
     model.load_state_dict(torch.load(args.checkpoint, map_location=torch.device(device), weights_only=True))
     print("Model loaded from the checkpoint")
     print(str(max_new_tokens) + " chars will be generated. You can change this with command line arguments.")
-    start_str = encode(input("Enter the starting string: ") + ' ')
+    str_input = input("Enter the starting string: ")
+    start_str = encode(str_input)
     start_idx = torch.tensor(start_str, dtype=torch.long).unsqueeze(0).to(device)
     output = decode(model.generate(start_idx, max_new_tokens=max_new_tokens, temperature=args.temperature, top_k=args.top_k)[0].tolist())
     print(output)
@@ -332,13 +342,15 @@ else:
             # Sample a batch of data
             xb, yb = get_batch('train')
 
-            # Evaluate the loss
-            logits, loss = model(xb, yb)
+            # Forward pass with autocast for mixed precision
+            with autocast(device_type=device):
+                logits, loss = model(xb, yb)
 
-            # Zero gradients, backward pass, and update weights
+            # Zero gradients, backward pass, and update weights using scaler
             optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
  
             # log per iteration
             if iter % args.logging_steps == 0 and iter > 0:
@@ -352,7 +364,8 @@ else:
 
     print("Training finished")
 
-    start_str = encode(input("Enter the starting string:"))
+    str_input = input("Enter the starting string: ")
+    start_str = encode(str_input)
     start_idx = torch.tensor(start_str, dtype=torch.long).unsqueeze(0).to(device)
     output = decode(model.generate(start_idx, max_new_tokens=max_new_tokens, temperature=args.temperature, top_k=args.top_k)[0].tolist())
     print(output)
