@@ -170,6 +170,7 @@ python gpt.py --checkpoint=path_to_checkpoint_file --device=cpu
 The generated text will be printed and saved to the outputs folder.
 
 **Train your own model**
+
 You can train your own model by just specifying a new training data path.
 ```bash
 python gpt.py --training_data=path_to_data_file
