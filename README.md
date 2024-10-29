@@ -62,12 +62,6 @@ A recently released former Columnist arrested on 18 November 1972. He goes on a 
 
 A psychedelic Hollywood 1968 drama that explores the city of Italy and the death dystopics in France. Following a weekend held hostage in 1978 at BCHD location, a bus trap center severs are on freelance across a business pursuit of the trading agency.
 
-### Gas Gun
-
-<img src="posters/gas_gun.webp"  width="350"/>
-
-When a slug finds himself running away on an anti-semitic island in a mysterious coastal town, he finds himself later in a major period inhuman wheelchair.
-
 
 ### In Wake Of The Labyrinth Eye
 
